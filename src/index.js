@@ -3,35 +3,41 @@
  * index.js — Node.js CLI Calculator
  *
  * Usage:
- *   node src/index.js <operation> <num1> <num2>
+ *   node src/index.js <operation> <num1> [num2]
  *
  * Supported operations:
  *   add        — addition (+)
  *   subtract   — subtraction (-)
  *   multiply   — multiplication (×)
  *   divide     — division (÷)
+ *   modulo     — modulo (%)
+ *   power      — exponentiation (^)
+ *   sqrt       — square root (√)
  *
  * Examples:
  *   node src/index.js add 5 3       → 8
  *   node src/index.js subtract 9 4  → 5
  *   node src/index.js multiply 6 7  → 42
  *   node src/index.js divide 10 2   → 5
+ *   node src/index.js modulo 10 3   → 1
+ *   node src/index.js power 2 4     → 16
+ *   node src/index.js sqrt 9        → 3
  */
 
-const { add, subtract, multiply, divide } = require('./calculator');
+const { add, subtract, multiply, divide, modulo, power, squareRoot } = require('./calculator');
 
 const [,, operation, arg1, arg2] = process.argv;
 
-if (!operation || arg1 === undefined || arg2 === undefined) {
-  console.error('Usage: node src/index.js <add|subtract|multiply|divide> <num1> <num2>');
+if (!operation || arg1 === undefined || (operation !== 'sqrt' && arg2 === undefined)) {
+  console.error('Usage: node src/index.js <add|subtract|multiply|divide|modulo|power|sqrt> <num1> [num2]');
   process.exit(1);
 }
 
 const a = parseFloat(arg1);
 const b = parseFloat(arg2);
 
-if (isNaN(a) || isNaN(b)) {
-  console.error('Error: Both arguments must be valid numbers.');
+if (isNaN(a) || (operation !== 'sqrt' && isNaN(b))) {
+  console.error('Error: Arguments must be valid numbers.');
   process.exit(1);
 }
 
@@ -42,8 +48,11 @@ try {
     case 'subtract': result = subtract(a, b); break;
     case 'multiply': result = multiply(a, b); break;
     case 'divide':   result = divide(a, b);   break;
+    case 'modulo':   result = modulo(a, b);   break;
+    case 'power':    result = power(a, b);    break;
+    case 'sqrt':     result = squareRoot(a);  break;
     default:
-      console.error(`Unknown operation: "${operation}". Use add, subtract, multiply, or divide.`);
+      console.error(`Unknown operation: "${operation}". Use add, subtract, multiply, divide, modulo, power, or sqrt.`);
       process.exit(1);
   }
   console.log(result);
